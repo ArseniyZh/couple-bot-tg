@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  django-backend:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    command: gunicorn couple_bot.wsgi:application --bind 0.0.0.0:8088
+    volumes:
+      - ./app/:/usr/src/app/
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 8088:8088
+    networks:
+      - bot-backend
+    env_file:
+      - .env
+
+  couple-bot:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    command: python manage.py start_bot
+    volumes:
+      - ./app/:/usr/src/app/
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - bot-backend
+    env_file:
+      - .env
+
+  bot-postgres:
+    image: postgres:latest
+    container_name: bot-postgres
+    env_file: .env
+    environment:
+      POSTGRES_DB: $DB_NAME
+      POSTGRES_USER: $DB_USER
+      POSTGRES_PASSWORD: $DB_PASSWORD
+    depends_on:
+      - django-backend
+    ports:
+      - "$DB_PORT:5432"
+    networks:
+      - bot-backend
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+volumes:
+  postgres_data:
+  logs:
+
+networks:
+  bot-backend:
+    driver: bridge
