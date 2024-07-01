@@ -29,16 +29,16 @@ services:
     env_file:
       - .env
 
-  couple_bot_postgres:
+  bot-postgres:
     image: postgres:latest
-    container_name: couple_bot_postgres
+    container_name: bot-postgres
     env_file: .env
     environment:
       POSTGRES_DB: $DB_NAME
       POSTGRES_USER: $DB_USER
       POSTGRES_PASSWORD: $DB_PASSWORD
     depends_on:
-      - django-backend
+      - couple-bot
     ports:
       - "$DB_PORT:5432"
     networks:
