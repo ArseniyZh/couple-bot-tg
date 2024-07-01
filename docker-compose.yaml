@@ -8,7 +8,6 @@ services:
     command: gunicorn couple_bot.wsgi:application --bind 0.0.0.0:8088
     volumes:
       - ./app/:/usr/src/app/
-      - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - 8088:8088
     networks:
@@ -25,7 +24,6 @@ services:
     command: python manage.py start_bot
     volumes:
       - ./app/:/usr/src/app/
-      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - bot-backend
     env_file:
@@ -42,7 +40,7 @@ services:
       POSTGRES_USER: $DB_USER
       POSTGRES_PASSWORD: $DB_PASSWORD
     ports:
-      - "$DB_PORT:5432"
+      - "$DB_PORT:$DB_PORT"
     networks:
       - bot-backend
     volumes:
