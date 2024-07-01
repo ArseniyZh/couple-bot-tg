@@ -1,5 +1,6 @@
 from aiogram.fsm.state import State, StatesGroup
 
+
 class ChangeWishState(StatesGroup):
     get_wish = State(state="get_wish")
     wish_change_menu = State(state="wish_change_menu")

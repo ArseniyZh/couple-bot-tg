@@ -77,7 +77,7 @@ def save_wish(wish: Wish, data: dict = None) -> None:
         for key, value in data.items():
             setattr(wish, key, value)
     wish.save()
-    
+
 
 @sync_to_async
 def delete_wish(wish: Wish) -> None:

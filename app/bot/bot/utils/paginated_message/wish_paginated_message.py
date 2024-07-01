@@ -9,15 +9,14 @@ from couple.models import Wish
 class WishPaginatedMessage(PaginatedMessage):
     async def get_formatted_object(self, _object: Wish) -> str:
         formatted_object = (
-            f"<b>[Желание #{_object.id}]</b>\n"
-            f"<pre>{_object.description}"
+            f"<b>[Желание #{_object.id}]</b>\n" f"<pre>{_object.description}"
         )
 
         if formatted_date_to := _object.formatted_date_to:
             formatted_object += (
                 f"\n\n\n🕒 Желаемая дата исполнения: <code>{formatted_date_to}</code>"
             )
-            
+
         formatted_object += "</pre>"
 
         return formatted_object

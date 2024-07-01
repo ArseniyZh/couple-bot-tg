@@ -28,15 +28,17 @@ from bot.bot.database.users import get_user_by_user_id
 from bot.bot.handlers.couple_handlers.couple_wish.own_wish import (
     callback_couple_wish_menu_own_wish_handler,
 )
-from bot.bot.handlers.couple_handlers.couple_wish.wish_change.state import ChangeWishState
-    
-    
+from bot.bot.handlers.couple_handlers.couple_wish.wish_change.state import (
+    ChangeWishState,
+)
+
+
 async def command_wish_change_menu_handler(message: types.Message, state: FSMContext):
     state_data = await state.get_data()
     wish: Wish = state_data.get("wish")
     wish_description = wish.description if wish.description else ""
     wish_date_to = wish.date_to.strftime("%d.%m.%Y") if wish.date_to else ""
-    
+
     builder = InlineKeyboardBuilder()
     builder.row(
         types.InlineKeyboardButton(
@@ -72,8 +74,8 @@ async def command_wish_change_menu_handler(message: types.Message, state: FSMCon
         reply_markup=builder.as_markup(),
     )
     await state.update_data(prev_message=prev_message)
-    
-    
+
+
 async def callback_change_wish_description_change_handler(
     callback: types.CallbackQuery, state: FSMContext
 ):
@@ -112,8 +114,8 @@ async def message_change_wish_description_get_message__change_handler(
     await state.set_data({"wish": wish})
     await state.set_state(ChangeWishState.wish_change_menu)
     await command_wish_change_menu_handler(message, state)
-    
-    
+
+
 async def callback_change_wish_date_to_handler(
     callback: types.CallbackQuery, state: FSMContext
 ):
@@ -157,8 +159,8 @@ async def process_dialog_calendar(
         await callback.message.delete()
         await state.set_state(ChangeWishState.wish_change_menu)
         await command_wish_change_menu_handler(callback.message, state)
-        
-        
+
+
 async def callback_save_wish_button_submit_handler(
     callback: types.CallbackQuery, state: FSMContext, bot: Bot
 ):
@@ -183,8 +185,8 @@ async def callback_save_wish_button_submit_handler(
 
     await state.clear()
     await callback_couple_wish_menu_own_wish_handler(callback, state)
-    
-    
+
+
 async def callback_delete_wish_button_submit_handler(
     callback: types.CallbackQuery, state: FSMContext
 ):
@@ -193,21 +195,18 @@ async def callback_delete_wish_button_submit_handler(
     """
     builder = InlineKeyboardBuilder()
     builder.row(
-        types.InlineKeyboardButton(
-            text="Да, удалить ❌", callback_data="delete_wish"
-        ),
+        types.InlineKeyboardButton(text="Да, удалить ❌", callback_data="delete_wish"),
         types.InlineKeyboardButton(
             text="Нет, оставить ✅", callback_data="not_delete_wish"
-        )
+        ),
     )
-    
+
     await callback.message.answer(
-        callback.message.text,
-        reply_markup=builder.as_markup()
+        callback.message.text, reply_markup=builder.as_markup()
     )
     await callback.message.delete()
-    
-    
+
+
 async def callback_delete_wish(callback: types.CallbackQuery, state: FSMContext):
     """
     Удаление желания
@@ -218,8 +217,8 @@ async def callback_delete_wish(callback: types.CallbackQuery, state: FSMContext)
     await delete_wish(wish)
     await state.clear()
     await callback_couple_wish_menu_own_wish_handler(callback, state)
-    
-    
+
+
 async def callback_not_delete_wish(callback: types.CallbackQuery, state: FSMContext):
     """
     Удаление желания
@@ -233,7 +232,7 @@ async def register_wish_change_menu_handlers(dp: Dispatcher):
         command_wish_change_menu_handler,
         ChangeWishState.wish_change_menu,
     )
-    
+
     dp.callback_query.register(
         callback_change_wish_description_change_handler,
         F.data == "change_wish_description_change",
@@ -242,7 +241,7 @@ async def register_wish_change_menu_handlers(dp: Dispatcher):
         message_change_wish_description_get_message__change_handler,
         ChangeWishState.change_wish_description_get_message,
     )
-    
+
     dp.callback_query.register(
         callback_change_wish_date_to_handler,
         F.data == "change_wish_date_to_change",
@@ -252,22 +251,22 @@ async def register_wish_change_menu_handlers(dp: Dispatcher):
         DialogCalendarCallback.filter(),
         ChangeWishState.set_date_to_change,
     )
-    
+
     dp.callback_query.register(
         callback_save_wish_button_submit_handler,
         F.data == "save_wish_button_submit_change",
     )
-    
+
     dp.callback_query.register(
         callback_delete_wish_button_submit_handler,
         F.data == "delete_wish_button_change",
     )
-    
+
     dp.callback_query.register(
         callback_delete_wish,
         F.data == "delete_wish",
     )
-    
+
     dp.callback_query.register(
         callback_not_delete_wish,
         F.data == "not_delete_wish",

@@ -39,32 +39,34 @@ class PaginatedMessage:
 
     async def get_current_base_keyboard(self) -> list[list[types.InlineKeyboardButton]]:
         keyboard = []
-        
+
         # row 1
         keyboard.append(
             [
-            types.InlineKeyboardButton(
-                text="<",
-                callback_data=(
-                    self.__get_page_backward_callback_name()
-                    if self.page > 0
-                    else "none"
+                types.InlineKeyboardButton(
+                    text="<",
+                    callback_data=(
+                        self.__get_page_backward_callback_name()
+                        if self.page > 0
+                        else "none"
+                    ),
                 ),
-            ),
-            types.InlineKeyboardButton(
-                text=f"Страница {self.page + 1}/{len(self.iterable) // self.per_page + 1}",
-                callback_data="none",
-            ),
-            types.InlineKeyboardButton(
-                text=">",
-                callback_data=(
-                    self.__get_page_forward_callback_name()
-                    if (len(self.current_iterable) == self.per_page)
-                    and (self.page < len(self.iterable) - (self.page) * self.per_page)
-                    else "none"
+                types.InlineKeyboardButton(
+                    text=f"Страница {self.page + 1}/{len(self.iterable) // self.per_page + 1}",
+                    callback_data="none",
                 ),
-            ),
-        ]
+                types.InlineKeyboardButton(
+                    text=">",
+                    callback_data=(
+                        self.__get_page_forward_callback_name()
+                        if (len(self.current_iterable) == self.per_page)
+                        and (
+                            self.page < len(self.iterable) - (self.page) * self.per_page
+                        )
+                        else "none"
+                    ),
+                ),
+            ]
         )
 
         if self.exit_func is not None:
@@ -72,9 +74,9 @@ class PaginatedMessage:
             keyboard.append(
                 [
                     types.InlineKeyboardButton(
-                    text="Выход",
-                    callback_data=self.__get_exit_callback_name(),
-                ),
+                        text="Выход",
+                        callback_data=self.__get_exit_callback_name(),
+                    ),
                 ]
             )
 
